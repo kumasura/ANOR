@@ -5,8 +5,8 @@ from gymnasium import spaces
 
 class FlightReroutingEnv(gym.Env):
 
-
     """Environment using schedule data with simple simulated disruptions."""
+
     def __init__(self, schedule_path, disruption_prob=0.3):
 
         super().__init__()
@@ -39,7 +39,6 @@ class FlightReroutingEnv(gym.Env):
             np.random.randint(self.obs_bins[4]),
             np.random.randint(self.obs_bins[5]),
         ]
-
 
 
     def reset(self, *, seed=None, options=None):
@@ -107,7 +106,6 @@ class QLearningAgent:
 def train(env, episodes=200):
     agent = QLearningAgent(env.obs_bins, env.action_space.n)
     for _ in range(episodes):
-
         state, _ = env.reset()
         done = False
         while not done:
