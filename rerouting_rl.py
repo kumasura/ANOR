@@ -5,6 +5,7 @@ from gymnasium import spaces
 
 class FlightReroutingEnv(gym.Env):
 
+
     """Environment using schedule data with simple simulated disruptions."""
     def __init__(self, schedule_path, disruption_prob=0.3):
 
@@ -38,6 +39,7 @@ class FlightReroutingEnv(gym.Env):
             np.random.randint(self.obs_bins[4]),
             np.random.randint(self.obs_bins[5]),
         ]
+
 
 
     def reset(self, *, seed=None, options=None):
@@ -117,13 +119,39 @@ def train(env, episodes=200):
     return agent
 
 
+def evaluate(env, agent):
+    """Run one episode with the learned policy and print step details."""
+    action_names = [
+        "Change path",
+        "Swap aircraft",
+        "Cancel flight",
+        "Adjust altitude",
+        "Divert",
+        "Wait",
+    ]
+    state, _ = env.reset()
+    done = False
+    total_reward = 0
+    while not done:
+        action = int(np.argmax(agent.Q[agent._state_index(state)]))
+        next_state, reward, terminated, _, _ = env.step(action)
+        total_reward += reward
+        print(
+            f"Flight {state[0]} -> action: {action_names[action]} | "
+            f"state: {state[1:]} | reward: {reward:.1f}"
+        )
+        state = next_state
+        done = terminated
+    print("Total reward:", total_reward)
+
+
 def main():
     env = FlightReroutingEnv('flight_schedule_new.xlsx')
     agent = train(env)
-
     print("Q-table shape:", agent.Q.shape)
-    # show small portion
     print(agent.Q[:5])
+    print("\nPolicy rollout:")
+    evaluate(env, agent)
 
 
 if __name__ == '__main__':
