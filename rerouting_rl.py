@@ -4,13 +4,16 @@ import gymnasium as gym
 from gymnasium import spaces
 
 class FlightReroutingEnv(gym.Env):
+
     """Environment using schedule data with simple simulated disruptions."""
 
     def __init__(self, schedule_path, disruption_prob=0.3):
+
         super().__init__()
         self.schedule = pd.read_excel(schedule_path)
         self.num_flights = len(self.schedule)
         self.disruption_prob = disruption_prob
+
 
         # Observation consists of: flight index, fuel level, weather, traffic,
         # alternate airports, other aircraft proximity
@@ -37,9 +40,11 @@ class FlightReroutingEnv(gym.Env):
             np.random.randint(self.obs_bins[5]),
         ]
 
+
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         self.current_idx = 0
+
         self.state = self._random_state()
         return tuple([self.current_idx] + self.state), {}
 
@@ -78,6 +83,7 @@ class QLearningAgent:
         self.gamma = gamma
         self.epsilon = epsilon
         self.action_size = action_size
+
 
     def _state_index(self, state):
         return np.ravel_multi_index(state, self.nvec)
@@ -144,6 +150,7 @@ def main():
     print(agent.Q[:5])
     print("\nPolicy rollout:")
     evaluate(env, agent)
+
 
 if __name__ == '__main__':
     main()
