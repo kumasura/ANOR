@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/14082e39-abf7-4b2b-a4eb-bd101602704d)![image](https://github.com/user-attachments/assets/ff485bed-aa82-4761-9b89-0714bf2a2706)Objective
+Objective
 ##
 In the context of aircraft rerouting during disruptions (such as bad weather, technical failures, or airspace congestion), the goal is to find a new route that minimizes the impact on the schedule, fuel consumption, and passenger satisfaction while ensuring safety.
 ##
