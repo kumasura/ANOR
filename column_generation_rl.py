@@ -1,5 +1,7 @@
 import numpy as np
-from rerouting_rl import FlightReroutingEnv, train
+
+from rerouting_rl import FlightReroutingEnv, QLearningAgent, train
+
 
 
 def generate_schedule(env, agent, epsilon=0.05):
