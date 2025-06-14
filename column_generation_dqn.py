@@ -1,12 +1,12 @@
 import numpy as np
+from rerouting_rl import FlightReroutingEnv
+from dqn_train import train_dqn, normalize
 
-from rerouting_rl import FlightReroutingEnv, QLearningAgent, train
 
-
-
-def generate_schedule(env, agent, epsilon=0.05):
-    """Generate a schedule (action for each flight) using an epsilon-greedy policy."""
+def generate_schedule(env, dqn, epsilon=0.05):
+    """Generate a schedule using an epsilon-greedy policy with the DQN."""
     state, _ = env.reset()
+    state_n = normalize(state, env.obs_bins)
     done = False
     actions = []
     total_reward = 0.0
@@ -14,26 +14,27 @@ def generate_schedule(env, agent, epsilon=0.05):
         if np.random.rand() < epsilon:
             action = env.action_space.sample()
         else:
-            action = agent.choose_action(state)
+            action = int(np.argmax(dqn.predict(state_n)))
         next_state, reward, terminated, _, _ = env.step(action)
         actions.append(action)
         total_reward += reward
         state = next_state
+        state_n = normalize(state, env.obs_bins)
         done = terminated
     return actions, total_reward
 
 
 def column_generation(schedule_path, iterations=20):
-    """Run column generation enhanced by an RL agent."""
+    """Run column generation enhanced with a DQN agent."""
     env = FlightReroutingEnv(schedule_path)
-    agent = train(env)
+    dqn = train_dqn(env)
 
     columns = []
     best_actions = None
     best_cost = float("inf")
 
     for _ in range(iterations):
-        actions, reward = generate_schedule(env, agent)
+        actions, reward = generate_schedule(env, dqn)
         cost = -reward
         columns.append((actions, cost))
         if cost < best_cost:
